@@ -1,3 +1,6 @@
+import icon from '../../img/map-ui/user-marker.png';
+import { addRoutingBtn } from './routingButton';
+
 export function getSearch(map) {
     new Autocomplete("search", {
         delay: 1000,
@@ -19,8 +22,9 @@ export function getSearch(map) {
                     console.error(error);
                 });
             });
-            },
-            onResults: ({ currentValue, matches, template }) => {
+        },
+
+        onResults: ({ currentValue, matches, template }) => {
             const regex = new RegExp(currentValue, "i");
             return matches === 0
                 ? template
@@ -35,36 +39,61 @@ export function getSearch(map) {
                     </li> `;
                     })
                     .join("");
-            },
+        },
 
-            onSubmit: ({ object }) => {
-            const { display_name } = object.properties;
+        onSubmit: ({ object }) => {
             const cord = object.geometry.coordinates;
-            const customId = Math.random();
 
-            const marker = L.marker([cord[1], cord[0]], {
-                title: display_name,
-                id: customId,
+            const markerIcon = L.divIcon({
+                html: `<img src="${icon}" style="width: 40px; height: 40px;">`,
+                className: 'user-marker',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
             });
 
-            marker.addTo(map).bindPopup(display_name);
+            const latStr = JSON.stringify(cord[1]);
+            const lngStr = JSON.stringify(cord[0]);
 
-            map.setView([cord[1], cord[0]], 8);
+            const userMarkerPopup = document.createElement('div');
+            const userMarkerLink = document.createElement('a');
+            const closeBtn = document.createElement('button');
 
-            map.eachLayer(function (layer) {
-                if (layer.options && layer.options.pane === "markerPane") {
-                if (layer.options.id !== customId) {
-                    map.removeLayer(layer);
-                }
-                }
+            userMarkerLink.href = `https://www.google.com/maps/place/${latStr},${lngStr}`;
+            userMarkerLink.target = "_blank";
+            userMarkerLink.textContent = "Google Mapsで開く";
+            
+            closeBtn.textContent = 'X';
+            closeBtn.className = 'close-btn';
+
+            userMarkerPopup.appendChild(userMarkerLink);
+            userMarkerPopup.appendChild(closeBtn);
+            userMarkerPopup.appendChild(addRoutingBtn(map, cord[1], cord[0]));
+            userMarkerPopup.className = 'user-marker-popup';
+
+            const marker = new L.marker([cord[1], cord[0]], {
+                keyboard: false,
+                icon: markerIcon,
+            }).addTo(map);
+            document.querySelector('body').appendChild(userMarkerPopup);
+
+            map.setView([cord[1], cord[0]], 15);
+
+            const markers = document.querySelectorAll('.user-marker');
+            if (markers.length > 1) {
+                document.querySelector('.user-marker').remove();
+                document.querySelector('.user-marker-popup').remove();
+            }
+            closeBtn.addEventListener('click', () => {
+                document.querySelector('.user-marker').remove();
+                document.querySelector('.user-marker-popup').remove();
             });
-            },
+        },
 
-            onSelectedItem: ({ index, element, object }) => {
+        onSelectedItem: ({ index, element, object }) => {
             console.log("onSelectedItem:", index, element, object);
-            },
+        },
 
-            noResults: ({ currentValue, template }) =>
-            template(`<li>No results found: "${currentValue}"</li>`),
-        });
+        noResults: ({ currentValue, template }) =>
+        template(`<li>No results found: "${currentValue}"</li>`),
+    });
 }
