@@ -89,11 +89,11 @@ export function getSearch(map) {
             });
         },
 
-        onSelectedItem: ({ index, element, object }) => {
-            console.log("onSelectedItem:", index, element, object);
-        },
+        // onSelectedItem: ({ index, element, object }) => {
+        //     console.log("onSelectedItem:", index, element, object);
+        // },
 
         noResults: ({ currentValue, template }) =>
-        template(`<li>No results found: "${currentValue}"</li>`),
+        template(`<li>検索結果が見つかりませんでした。</li>`),
     });
 }
