@@ -8,7 +8,7 @@ export function getSearch(map) {
         howManyCharacters: 2,
 
         onSearch: function ({ currentValue }) {
-            const api = `https://nominatim.openstreetmap.org/search?format=geojson&limit=5&q=${encodeURI(
+            const api = `https://nominatim.openstreetmap.org/search?format=geojson&limit=5&accept-language=ja&q=${encodeURI(
                 currentValue
             )}`;
             
