@@ -15,6 +15,7 @@ export function initGPS(map) {
       outOfView: 'setView'
     },
     keepCurrentZoomLevel: true,
+    showPopup: false,
   })
   .addTo(map);
 

@@ -398,7 +398,30 @@ a.leaflet-popup-close-button {
     display: none;
 }
 
+@media (min-width: 600px) {
+    .leaflet-routing-container {
+        position: fixed;
+        left: 30vw;
+        right: 40vw;
+        width: 40vw;
+        border-radius: 20px 20px 0 0;
+    }
 
+    .leaflet-routing-container table {
+        width: 100%;
+    }
+    .leaflet-routing-alt {
+        border-radius: 20px;
+    }
+
+    .leaflet-routing-alt::-webkit-scrollbar {
+        display: none;
+    }
+
+    .leaflet-routing-collapse-btn {
+        left: 30vw;
+    }
+}
 
 /* ATTRIBUTION */
 .leaflet-control-attribution.leaflet-control {
