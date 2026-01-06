@@ -4,6 +4,10 @@
     overflow: hidden;
 }
 
+iframe {
+    display: none;
+}
+
 .top-bar {
     position: fixed;
     z-index: 100000000;

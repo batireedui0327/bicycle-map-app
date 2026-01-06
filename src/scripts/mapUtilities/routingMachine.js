@@ -7,7 +7,7 @@ let lastLng = null;
 export function drawRoute(map, destinationLat, destinationLng, fitToWindow){
     // Must have GPS ready
     if(window.currentLat == null || window.currentLng == null){
-        alert("GPS not ready yet.");
+        alert("GPSを取得中です...");
         return;
     }
 
@@ -23,7 +23,7 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow){
     });
 
     const root = document.querySelector(':root');
-    root.style.setProperty('--map-height', '70vh');
+    root.style.setProperty('--map-height', '70svh');
 
     const collapseBtn = document.createElement('span');
     collapseBtn.className = 'leaflet-routing-collapse-btn';
@@ -40,7 +40,7 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow){
             map.removeControl(window.routingControl);
             document.querySelector('.destination-marker')?.remove();
 
-            root.style.setProperty('--map-height', '100vh');
+            root.style.setProperty('--map-height', '100svh');
 
             e.target.remove();
         }
@@ -52,7 +52,7 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow){
     }).addTo(map);
 
     const osrmBikeRouter = L.Routing.osrmv1({
-        serviceUrl: 'http://localhost:5000/route/v1',
+        serviceUrl: 'http://192.168.11.4:5000/route/v1',
         profile: 'bike',
     })
 
