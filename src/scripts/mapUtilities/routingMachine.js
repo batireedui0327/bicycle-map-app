@@ -52,7 +52,9 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow){
     }).addTo(map);
 
     const osrmBikeRouter = L.Routing.osrmv1({
-        serviceUrl: 'http://10.40.163.191:5000/route/v1',
+        serviceUrl: 'http://192.168.11.2:5000/route/v1',
+        // USE ONLY FOR DEMO VIDEO OUTSIDE
+        // serviceUrl: 'https://router.project-osrm.org/route/v1', 
         profile: 'bike',
     })
 
