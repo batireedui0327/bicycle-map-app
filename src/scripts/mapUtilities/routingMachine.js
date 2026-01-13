@@ -7,10 +7,10 @@ let lastLng = null;
 
 export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
   // Must have GPS ready
-  // if (window.currentLat == null || window.currentLng == null) {
-  //   alert('GPSを取得中です...');
-  //   return;
-  // }
+  if (window.currentLat == null || window.currentLng == null) {
+    alert('GPSを取得中です...');
+    return;
+  }
 
   if (window.routingControl?.router?._abortRequests) {
     window.routingControl.router._abortRequests();
@@ -85,17 +85,17 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
   function modifierToJa(mod) {
     switch (mod) {
       case 'left':
-        return '↰ 左折';
+        return '← 左折';
       case 'right':
-        return '↱ 右折';
+        return '→ 右折';
       case 'slight left':
-        return '↰ やや左へ';
+        return '← やや左へ';
       case 'slight right':
-        return '↱ やや右へ';
+        return '→ やや右へ';
       case 'sharp left':
-        return '↰ 急左折';
+        return '← 急左折';
       case 'sharp right':
-        return '↱ 急右折';
+        return '→ 急右折';
       case 'uturn':
         return '↶ Uターン';
       case 'straight':
@@ -127,8 +127,8 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
       styles: [{ color: 'var(--yellow)', opacity: 1, weight: 8 }],
     },
     waypoints: [
-      // L.latLng(window.currentLat, window.currentLng),
-      L.latLng(34.98493616431302, 135.75248977767515),
+      L.latLng(window.currentLat, window.currentLng),
+      // L.latLng(34.98493616431302, 135.75248977767515),
       L.latLng(destinationLat, destinationLng),
     ],
     createMarker: () => null,
