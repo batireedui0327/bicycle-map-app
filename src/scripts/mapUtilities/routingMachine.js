@@ -1,5 +1,7 @@
-import icon from '../../img/map-ui/user-marker.png';
 import 'leaflet-routing-machine';
+import { playAudioDirection } from './audioInstructions';
+
+import icon from '../../img/map-ui/user-marker.png';
 
 let routeInterval = null;
 let lastLat = null;
@@ -7,10 +9,12 @@ let lastLng = null;
 
 export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
   // Must have GPS ready
-  if (window.currentLat == null || window.currentLng == null) {
-    alert('GPSを取得中です...');
-    return;
-  }
+  // if (window.currentLat == null || window.currentLng == null) {
+  //   alert('GPSを取得中です...');
+  //   return;
+  // }
+
+  const allDirections = [];
 
   if (window.routingControl?.router?._abortRequests) {
     window.routingControl.router._abortRequests();
@@ -55,8 +59,15 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
     // USE ONLY FOR DEMO VIDEO OUTSIDE
     // serviceUrl: 'https://router.project-osrm.org/route/v1',
     profile: 'bike',
-
     stepToText(step) {
+      const currentStep = {
+        type: step.maneuver.type,
+        modifier: step.maneuver.modifier,
+        distance: step.distance,
+        location: step.maneuver.location,
+      };
+      allDirections.push(currentStep);
+
       const m = step.maneuver || {};
       const name = step.name ? `（${step.name}）` : '';
 
@@ -64,20 +75,11 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
         case 'depart':
           return `出発${name}`;
 
-        case 'turn':
-          return `${modifierToJa(m.modifier)}${name}`;
-
-        case 'continue':
-          return `⇈ 直進${name}`;
-
-        case 'roundabout':
-          return `ロータリーに入り、出口へ進む${name}`;
-
         case 'arrive':
           return '目的地に到着';
 
         default:
-          return `⇈ 進む`;
+          return `${modifierToJa(m.modifier)}${name}`;
       }
     },
   });
@@ -96,12 +98,10 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
         return '↖ 急左折';
       case 'sharp right':
         return '↗ 急右折';
-      case 'uturn':
-        return '↶ Uターン';
       case 'straight':
-        return '⇈ 直進';
+        return '⇈ 進む';
       default:
-        return '⇈ 進行';
+        return '⇈ 進む';
     }
   }
 
@@ -127,32 +127,36 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
       styles: [{ color: 'var(--yellow)', opacity: 1, weight: 8 }],
     },
     waypoints: [
-      L.latLng(window.currentLat, window.currentLng),
-      // L.latLng(34.98493616431302, 135.75248977767515),
+      // L.latLng(window.currentLat, window.currentLng),
+      L.latLng(34.98493616431302, 135.75248977767515),
       L.latLng(destinationLat, destinationLng),
     ],
     createMarker: () => null,
   }).addTo(map);
 
-  if (fitToWindow) {
-    map.fitBounds(
-      [
-        [destinationLat, destinationLng],
-        [window.currentLat, window.currentLng],
-      ],
-      {
-        paddingTopLeft: [50, 100],
-        paddingBottomRight: [100, 250],
-      }
-    );
-  }
+  // if (fitToWindow) {
+  //   map.fitBounds(
+  //     [
+  //       [destinationLat, destinationLng],
+  //       [window.currentLat, window.currentLng],
+  //     ],
+  //     {
+  //       paddingTopLeft: [50, 100],
+  //       paddingBottomRight: [100, 250],
+  //     }
+  //   );
+  // }
+
+  setTimeout(() => {
+    playAudioDirection(allDirections);
+  }, 500);
 
   if (routeInterval) clearInterval(routeInterval);
   routeInterval = setInterval(() => {
-    if (window.currentLat === lastLat && window.currentLng === lastLng) return;
+    // if (window.currentLat === lastLat && window.currentLng === lastLng) return;
     lastLat = window.currentLat;
     lastLng = window.currentLng;
 
     drawRoute(map, destinationLat, destinationLng, false);
-  }, 10000);
+  }, 1000000);
 }
