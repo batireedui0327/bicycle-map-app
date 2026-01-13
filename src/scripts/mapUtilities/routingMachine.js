@@ -9,12 +9,10 @@ let lastLng = null;
 
 export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
   // Must have GPS ready
-  // if (window.currentLat == null || window.currentLng == null) {
-  //   alert('GPSを取得中です...');
-  //   return;
-  // }
-
-  const allDirections = [];
+  if (window.currentLat == null || window.currentLng == null) {
+    alert('GPSを取得中です...');
+    return;
+  }
 
   if (window.routingControl?.router?._abortRequests) {
     window.routingControl.router._abortRequests();
@@ -54,6 +52,7 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
     icon: markerIcon,
   }).addTo(map);
 
+  const allDirections = [];
   let lastStepDistance = 0;
 
   const osrmBikeRouter = L.Routing.osrmv1({
@@ -130,35 +129,35 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
       styles: [{ color: 'var(--yellow)', opacity: 1, weight: 8 }],
     },
     waypoints: [
-      // L.latLng(window.currentLat, window.currentLng),
-      L.latLng(34.98493616431302, 135.75248977767515),
+      L.latLng(window.currentLat, window.currentLng),
+      // L.latLng(34.98493616431302, 135.75248977767515),
       L.latLng(destinationLat, destinationLng),
     ],
     createMarker: () => null,
   }).addTo(map);
 
-  // if (fitToWindow) {
-  //   map.fitBounds(
-  //     [
-  //       [destinationLat, destinationLng],
-  //       [window.currentLat, window.currentLng],
-  //     ],
-  //     {
-  //       paddingTopLeft: [50, 100],
-  //       paddingBottomRight: [100, 250],
-  //     }
-  //   );
-  // }
+  if (fitToWindow) {
+    map.fitBounds(
+      [
+        [destinationLat, destinationLng],
+        [window.currentLat, window.currentLng],
+      ],
+      {
+        paddingTopLeft: [50, 100],
+        paddingBottomRight: [100, 250],
+      },
+    );
+  }
 
-  // Change interval to something lower when working with local osrm server
+  // Set timeout to something lower when working with local osrm server
   setTimeout(() => {
-    fixDistancesPosition();
+    fixDistances();
     playAudioDirection(allDirections);
   }, 500);
 
   if (routeInterval) clearInterval(routeInterval);
   routeInterval = setInterval(() => {
-    // if (window.currentLat === lastLat && window.currentLng === lastLng) return;
+    if (window.currentLat === lastLat && window.currentLng === lastLng) return;
     lastLat = window.currentLat;
     lastLng = window.currentLng;
 
@@ -166,7 +165,7 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
   }, 10000);
 }
 
-function fixDistancesPosition() {
+function fixDistances() {
   const tRows = document.querySelectorAll(
     '.leaflet-routing-container tbody tr td:last-child',
   );
