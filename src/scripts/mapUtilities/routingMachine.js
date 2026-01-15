@@ -58,9 +58,11 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
   let lastStepDistance = 0;
 
   const osrmBikeRouter = L.Routing.osrmv1({
-    serviceUrl: 'http://localhost:5000/route/v1',
-    // USE ONLY FOR DEMO VIDEO OUTSIDE
+    // OLD ONE
     // serviceUrl: 'https://router.project-osrm.org/route/v1',
+    // USE ONLY FOR DEMO VIDEO OUTSIDE
+    serviceUrl: 'https://routing.openstreetmap.de/routed-bike/route/v1',
+    // serviceUrl: 'http://localhost:5000/route/v1',
     profile: 'bike',
     stepToText(step) {
       const currentStep = {
@@ -80,7 +82,7 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
           return `出発${name}`;
 
         case 'arrive':
-          return '目的地に到着';
+          return 'まもなく到着';
 
         default:
           return `${modifierToJa(m.modifier)}${name}`;
