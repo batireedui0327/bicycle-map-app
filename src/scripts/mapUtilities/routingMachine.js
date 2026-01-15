@@ -149,11 +149,11 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
     );
   }
 
-  // Set timeout to something lower when working with local osrm server
+  // Set timeout to something higher when working with demo osrm server
   setTimeout(() => {
     fixDistances();
     playAudioDirection(allDirections);
-  }, 500);
+  }, 50);
 
   if (routeInterval) clearInterval(routeInterval);
   routeInterval = setInterval(() => {

@@ -1,5 +1,9 @@
 import rightAudio from '../../audio/right.mp3';
+import slightRightAudio from '../../audio/slight-right.mp3';
+import sharpRightAudio from '../../audio/sharp-right.mp3';
 import leftAudio from '../../audio/left.mp3';
+import slightLeftAudio from '../../audio/slight-left.mp3';
+import sharpLeftAudio from '../../audio/sharp-left.mp3';
 import straightAudio from '../../audio/straight.mp3';
 import arrivalAudio from '../../audio/arrival.mp3';
 
@@ -22,17 +26,31 @@ function playAudio(currentDirection) {
   let audio;
 
   if (type === 'arrive') {
-    console.log('Played arrive audio');
     audio = new Audio(arrivalAudio);
-  } else if (modifier.includes('right')) {
-    console.log('Played turn right audio');
-    audio = new Audio(rightAudio);
-  } else if (modifier.includes('left')) {
-    console.log('Played turn left audio');
-    audio = new Audio(leftAudio);
   } else {
-    console.log('Played go forward audio');
-    audio = new Audio(straightAudio);
+    switch (modifier) {
+      case 'left':
+        audio = new Audio(leftAudio);
+        break;
+      case 'right':
+        audio = new Audio(rightAudio);
+        break;
+      case 'slight left':
+        audio = new Audio(slightLeftAudio);
+        break;
+      case 'slight right':
+        audio = new Audio(slightRightAudio);
+        break;
+      case 'sharp left':
+        audio = new Audio(sharpLeftAudio);
+        break;
+      case 'sharp right':
+        audio = new Audio(sharpRightAudio);
+        break;
+      default:
+        audio = new Audio(straightAudio);
+        break;
+    }
   }
   audio.play();
 }
