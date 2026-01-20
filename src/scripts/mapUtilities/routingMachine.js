@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+/* eslint-disable no-undef */
 import 'leaflet-routing-machine';
 import { playAudioDirection } from './audioInstructions';
 
@@ -26,7 +28,7 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
   });
 
   const root = document.querySelector(':root');
-  root.style.setProperty('--map-height', '74svh');
+  root.style.setProperty('--map-height', '79svh');
 
   const collapseBtn = document.createElement('span');
   collapseBtn.className = 'leaflet-routing-collapse-btn';
@@ -56,9 +58,9 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
   let lastStepDistance = 0;
 
   const osrmBikeRouter = L.Routing.osrmv1({
-    serviceUrl: 'http://localhost:5000/route/v1',
     // USE ONLY FOR DEMO VIDEO OUTSIDE
-    // serviceUrl: 'https://router.project-osrm.org/route/v1',
+    // serviceUrl: 'https://routing.openstreetmap.de/routed-bike/route/v1',
+    serviceUrl: 'http://localhost:5000/route/v1',
     profile: 'bike',
     stepToText(step) {
       const currentStep = {
@@ -71,14 +73,14 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
       lastStepDistance = step.distance;
 
       const m = step.maneuver || {};
-      const name = step.name ? `（${step.name}）` : '';
+      const name = step.name ? ` (${step.name}) ` : '';
 
       switch (m.type) {
         case 'depart':
           return `出発${name}`;
 
         case 'arrive':
-          return '目的地に到着';
+          return 'まもなく到着';
 
         default:
           return `${modifierToJa(m.modifier)}${name}`;
@@ -149,17 +151,24 @@ export function drawRoute(map, destinationLat, destinationLng, fitToWindow) {
     );
   }
 
-  // Set timeout to something lower when working with local osrm server
-  setTimeout(() => {
-    fixDistances();
-    playAudioDirection(allDirections);
-  }, 500);
+  window.routingControl.on('routesfound', () => {
+    setTimeout(() => {
+      fixDistances();
+      playAudioDirection(allDirections);
+    }, 1);
+  });
 
   if (routeInterval) clearInterval(routeInterval);
   routeInterval = setInterval(() => {
-    if (window.currentLat === lastLat && window.currentLng === lastLng) return;
-    lastLat = window.currentLat;
-    lastLng = window.currentLng;
+    if (
+      window.currentLat.toFixed(4) === lastLat &&
+      window.currentLng.toFixed(4) === lastLng
+    )
+      return;
+    lastLat = window.currentLat.toFixed(4);
+    lastLng = window.currentLng.toFixed(4);
+    console.log(lastLng);
+    console.log(lastLat);
 
     drawRoute(map, destinationLat, destinationLng, false);
   }, 10000);
